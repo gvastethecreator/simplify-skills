@@ -1,6 +1,6 @@
 ---
 name: simplify-repo
-description: "Repo simplification refactor: delete over-engineering, land the smaller architecture, interface pass, verify against baseline, honest report."
+description: "Repo simplification: delete over-engineering, dead code, obsolete compat and migration support; land the smaller architecture and verify against baseline, or audit-only with grouped findings and an ordered cleanup plan."
 disable-model-invocation: true
 ---
 
@@ -8,7 +8,12 @@ disable-model-invocation: true
 
 Subtraction, implemented. Leave fewer concepts, states, branches, files, exports, dependencies, and maintenance obligations than you found, with real behavior, safety, and accessibility intact.
 
-This is an implementation skill. Ending at an audit, proposal, or recommendation list is failure unless the user asked for a report or a stop condition below fired.
+This is an implementation skill. Ending at an audit, proposal, or recommendation list is failure unless the user asked for audit-only mode or a stop condition below fired.
+
+## Modes
+
+- **Implement** (default): steps 1–9.
+- **Audit-only**: the user says audit first, don't edit yet, report only, solo auditoría, or asks for a cleanup plan. Run steps 1–5 read-only, then write the audit report per [references/audit-report.md](references/audit-report.md). No product edits, no commits, no tracker writes unless asked. Say at the start that the pass runs in audit-only mode. A later "go" runs implement mode on the approved plan steps and reuses the audit evidence that is still valid.
 
 Optimize for the product that exists today. Not for the platform someone imagined.
 
@@ -19,13 +24,14 @@ Optimize for the product that exists today. Not for the platform someone imagine
 - parallel old and new implementations living side by side
 - a repo where docs, tests, and tasks describe an architecture that no longer exists
 - a rewrite request where the honest answer is deletion, not another layer
+- a deep cleanup audit: dead or unreachable code, duplicate logic, obsolete compatibility layers, schema and migration support that may no longer be needed (audit-only mode)
 
 Prefer specialized skill:
 
 - `ponytail`: one change, one simplicity decision.
 - `simplify-tests`: suite reduction. No architecture change.
 - `simplify-ci`: pipeline reduction. No architecture change. Failing checks stay `fix-ci`.
-- `technical-debt-audit`: inventory, classification, priorities. No implementation.
+- `technical-debt-audit`: debt inventory from docs, ADRs, and plans against code; priorities. No deletion audit, no implementation.
 - `project-maintenance`: root clutter, accidental git-history junk, stale docs to `.scratch`, logs, scripts/deps, dead files, and in-architecture low-value code. No architecture change.
 - `improve-codebase-architecture`: approval-gated batch of N improvements with value reports.
 - `project-tune-up`: existing-repo puesta a punto. `rust-http-api`, `rust-cli`, `bevy-app`, `tauri-desktop` for those contracts.
@@ -43,7 +49,7 @@ Prefer specialized skill:
 - `research` only for official migration guides, deprecations, platform limits, security detail.
 - `improve-ui`, `better-accessibility`, `review-animations` for the interface pass.
 - `to-tickets` / `to-spec` for work that genuinely cannot land in this pass.
-- `html-lab` when the user wants the final report as a shareable HTML artifact.
+- `html-report` when the user wants the final or audit report as a shareable HTML file.
 - `hablar-claro` for operator chat.
 
 ## Hard Rules
@@ -66,7 +72,7 @@ Do not simplify these away. They are the behavior, not the ceremony.
 - Validation at trust boundaries, and parsing of untrusted input or protocol messages
 - Authentication, authorization, credential redaction, secret handling
 - Atomic writes where interruption corrupts data, and restrictive permissions on sensitive files
-- Data-loss protection, and migrations still required by supported versions
+- Data-loss protection, and migration history still needed by existing databases or supported versions ([references/migrations.md](references/migrations.md))
 - Accessibility behavior and explicitly supported user behavior
 - Errors and recovery paths that let a caller or user decide something
 
@@ -77,11 +83,12 @@ Internal layers do not need to re-defend values already validated at a clear bou
 1. Frame and protect.
    - Confirm scope (whole repo or named surface), mode (implement, default; audit-only on request), and any blocking repo convention.
    - `git status -sb`, current branch, merge base, pre-existing modified and untracked files.
-   - Open or create the ledger in the repo's existing planning, spec, or issue system. Do not build a parallel tracker.
+   - Open or create the ledger in the repo's existing planning, spec, or issue system. Do not build a parallel tracker. In audit-only mode the audit report is the ledger.
    - Done: scope, mode, protected pre-existing changes, and ledger location written down.
 
 2. Map product and ownership.
-   - Product purpose, main user flows, entry points, runtime targets, packages, public APIs, state and persistence owners, UI entry points, design tokens, tests, build, CI, scripts, docs, ADRs, open issues touching the area.
+   - Product purpose, main user flows, entry points, routes and how they are mounted, runtime targets, packages, public APIs, dependencies, state and persistence owners, database schema source and migration runner, UI entry points, design tokens, tests, build, CI, scripts, docs, ADRs, open issues touching the area.
+   - For a large repo, map with `codebase-inspection` or an existing code map first, then read only the flows that matter.
    - Which files are authoritative and which only restate them.
    - Done: you can name every real flow and who owns its state.
 
@@ -92,14 +99,17 @@ Internal layers do not need to re-defend values already validated at a clear bou
 
 4. Trace flows, then audit for deletion.
    - Per flow: entry point, domain operation, state transitions, validation boundary, persistence, network, protocol mapping, error path, recovery path, user-visible feedback.
-   - Find authoritative state versus mirrored state, uncalled code, unconsumed exports, abstractions with one implementation, checks that repeat prior validation, machinery serving a hypothetical.
-   - Rank candidates by deletion value against behavioral risk. Read [references/deletion-audit.md](references/deletion-audit.md) for the smell catalog, per-finding record, and ranking.
-   - Done: a ranked candidate ledger where each entry names its evidence and its smallest replacement.
+   - Find authoritative state versus mirrored state, uncalled or unreachable code, unconsumed exports, duplicate logic, abstractions with one implementation, checks that repeat prior validation, obsolete compatibility layers, machinery serving a hypothetical.
+   - When the repo has a database, trace schema, migrations, applied-state, and migration support code per [references/migrations.md](references/migrations.md). Keep history still needed by existing databases apart from support code that is obsolete.
+   - Check usage before you call anything dead. Record false positives as "checked and kept" with their evidence.
+   - Rank candidates by deletion value against behavioral risk. Read [references/deletion-audit.md](references/deletion-audit.md) for the smell catalog, per-finding record, confidence scale, grouping, and line estimate.
+   - Done: a ranked candidate ledger where each entry names exact paths, evidence, confidence, group, and its smallest replacement.
 
 5. Choose the target shape.
    - Smallest architecture that serves today's domain operations: domain verbs, one implementation per real backend, one persistence owner, thin entry points, honest concurrency, platform cancellation, a small decision-oriented error model.
    - Read [references/target-shape.md](references/target-shape.md) before designing replacements.
    - Name breaking changes now, before implementing them.
+   - In audit-only mode, turn the target into the ordered cleanup plan per [references/audit-report.md](references/audit-report.md) and stop.
    - Done: target described in terms of current product behavior, with breaking changes listed.
 
 6. Land deletion slices.
@@ -135,6 +145,9 @@ Delete when at least one holds, and the evidence is in the transcript:
 - Behavior fully covered by a retained path you traced end to end.
 - Generated, cached, or artifact file that is ignored or should be.
 - Doc, test, or fixture that only preserves machinery this pass removed.
+- Schema or migration support code that meets the database bar in [references/migrations.md](references/migrations.md).
+
+Dead-code tools (unused exports, unused dependencies, coverage, reachability) give candidates, not evidence. Confirm each hit with the search above. Use tools the repo already has; a one-off download needs the user's consent.
 
 Stop and ask when the target may be a supported public API, a release artifact, security evidence, user notes, migration history, or when ownership cannot be established.
 
@@ -148,7 +161,8 @@ When blocked: finish everything independent of the blocker, record the blocker a
 
 ## Anti-Goals
 
-- Line-count targets. Deletion of concepts is the metric, not lines.
+- Line-count targets. Deletion of concepts is the metric, not lines. Report a line estimate when asked or useful; never shape findings to grow it.
+- Abstractions added only to satisfy DRY or SOLID. See the principles in [references/target-shape.md](references/target-shape.md).
 - Moving files to look organized.
 - Replacing machinery with fashionable machinery.
 - Deferring to a ticket what could land in this pass.
@@ -156,4 +170,6 @@ When blocked: finish everything independent of the blocker, record the blocker a
 
 ## Output Shape
 
-Terse final report, expanded per [references/report.md](references/report.md): status; what changed and why; baseline versus final gates; old and new call paths; what was removed (concepts, states, branches, files, exports, dependencies, config); public API and breaking changes; interface fixes; docs and tracker updates; branch, commits, PR status; remaining risks and manual checks; machinery deliberately omitted with its reinstatement trigger.
+Audit-only mode: the audit report per [references/audit-report.md](references/audit-report.md): scope and coverage; findings grouped into safe deletions, refactors, and changes that need a migration plan; checked and kept; line estimate; ordered cleanup plan with checks per step; decisions owed.
+
+Implement mode: terse final report, expanded per [references/report.md](references/report.md): status; what changed and why; baseline versus final gates; old and new call paths; what was removed (concepts, states, branches, files, exports, dependencies, config); public API and breaking changes; interface fixes; docs and tracker updates; branch, commits, PR status; remaining risks and manual checks; machinery deliberately omitted with its reinstatement trigger.

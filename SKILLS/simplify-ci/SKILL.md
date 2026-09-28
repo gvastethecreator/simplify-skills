@@ -1,11 +1,16 @@
 ---
 name: simplify-ci
-description: "CI reduction: prune overlapping jobs, matrices, extra runtimes, and heavy GitHub Actions so every project keeps the lightest required pipeline. Use for bloated workflows, slow checks, duplicate lint/test/build jobs, or when adding CI."
+description: "CI reduction: prune overlapping jobs, matrices, extra runtimes, and heavy GitHub Actions so every project keeps the lightest required pipeline, or audit-only with grouped findings and an ordered plan. Use for bloated workflows, slow checks, duplicate lint/test/build jobs, CI audits, or when adding CI."
 ---
 
 # Simplify CI
 
-Keep the cheapest pipeline that still proves required gates. Job count, matrices, and extra runtimes are not quality. Work within the requested repo; a review reports candidates, while a cleanup request authorizes supported local edits.
+Keep the cheapest pipeline that still proves required gates. Job count, matrices, and extra runtimes are not quality. Work within the requested repo.
+
+## Modes
+
+- **Clean up** (default for reduce, prune, or clean requests): steps 1–4.
+- **Audit-only**: the user asks for a review, audit, or plan, or says don't edit yet. Run steps 1–2 read-only and deliver the [audit report](#audit-report). No edits, no commits, no GitHub settings changes. Say so at the start. A later "go" runs steps 3–4 on the approved plan steps and reuses audit evidence that is still valid.
 
 Failing checks are `fix-ci`. Do not delete a red job to obtain green. Suite reduction is `simplify-tests`. Actions enable/disable and token permissions are `github-hygiene`.
 
@@ -36,6 +41,7 @@ For each job or step, ask: **Which plausible product failure does this catch, an
 - **Remove** a job that only repeats a sibling, a second OS/runtime with no supported target, a coverage/mutation/report job, a path-unfiltered run for an unrelated package, a scheduled job with no consumer, or a step that cannot fail when the claimed contract breaks.
 - **Consolidate** equivalent lint, type, test, and build steps into the one existing aggregate command, or into that command's relevant parts, not both. One job that runs the existing check beats three jobs that split the same work.
 - A slow or flaky job may still be the unique gate. Fix its command or retain it with the problem recorded. Do not hide it with retries, longer timeouts, `continue-on-error`, or larger runners.
+- Check consumers before calling a job or workflow unused: `needs:` chains, `workflow_run` triggers, `workflow_call` callers in this and other repos, required-check names in branch protection and rulesets, artifacts downloaded later, deploy or release docs, and README badges.
 - Done: each removal has evidence of duplication, missing consumers, or lack of unique signal. Retain uncertain required checks and state the evidence gap.
 
 ## 3. Apply one coherent reduction
@@ -52,6 +58,30 @@ For each job or step, ask: **Which plausible product failure does this catch, an
 - On a public repo with Actions enabled, one successful run of the retained workflow is enough when the change can affect that job. Reuse a current green run when the workflow did not change. Private personal repos stay disabled unless the user asked to run Actions.
 - Report removed jobs/steps, retained gates, local commands run or skipped, and any required-check rename still owed in GitHub settings.
 - Done: reduction has evidence, retained gates still have an owner, and the result states what was not exercised remotely.
+
+## Audit Report
+
+Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. Offer `html-report` for a shareable file.
+
+Per finding:
+
+- **ID and group:** `D` safe removal, `C` consolidate, `G` needs settings or explicit authority.
+- **Exact paths:** workflow file, job id, step name, line range, trigger, the local command it runs, and its required-check name if any.
+- **Why:** duplicate of which retained job, no consumer, unsupported OS or runtime, cannot fail when the claimed contract breaks, template leftover.
+- **Change:** what to remove or merge, and which retained job still catches the failure.
+- **Risk:** the failure that could go uncaught, merges blocked by a missing required check, release or deploy breakage, secrets or caches other workflows still use.
+- **Confidence:** high when you read the job YAML and recent runs, the retained job runs the same command, and the job is not required or its rename is in the plan; medium when one gap remains (protection not readable, no run history, possible external `workflow_call` callers), named with its closing check; low is a lead only. Only high goes to `D`.
+- **Estimate:** jobs and steps removed, YAML lines, and runner minutes per run and per month from existing run history, counting the matrix multiplier. No history means "unknown".
+
+Groups:
+
+- **D:** duplicate jobs or steps, scheduled runs with no consumer, unsupported OS or runtime entries, template leftovers, now-unused caches, services, and setup steps. Never a required check.
+- **C:** merge into the existing aggregate command, add path filters that skip unrelated installs, drop matrix dimensions with no supported target.
+- **G:** required-check renames or removals in branch protection or rulesets, release, deploy, or publish workflows, mandatory security scans, secret deletion, Actions enable state, larger runners.
+
+Report sections: scope and coverage (repo, owner, visibility, Actions state, workflows read, run history used, what was not readable); summary table (ID, group, finding, paths, confidence, estimate, risk); findings by group; checked and kept, with the unique gate each job owns; leads; totals per group; decisions owed.
+
+Ordered plan: `D` first, then `C`, then `G`. One step is one reviewable change. Per step: files and jobs touched, the retained gate for each removed job, checks after the step (YAML validation with the repo's existing linter if any, the retained local command, one remote run only on a public repo when the step affects that job), required-check settings to change and who changes them, rollback, and any decision needed first.
 
 ## Ordinary work after cleanup
 

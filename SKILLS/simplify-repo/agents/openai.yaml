@@ -1,6 +1,6 @@
 interface:
   display_name: "Simplify Repo"
-  short_description: "Repo-wide simplification refactor, implemented"
+  short_description: "Repo-wide simplification, implemented or audit-only"
   default_prompt: "Use $simplify-repo to baseline this repository, audit over-engineering, land the smaller architecture, verify against the baseline, and report."
 policy:
   allow_implicit_invocation: false

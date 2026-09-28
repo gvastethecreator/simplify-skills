@@ -13,6 +13,18 @@ Read during step 5, before writing replacements. Design for the product that exi
 
 If the diagram needs more layers than that, the product should justify each one by name.
 
+## Principles
+
+KISS wins ties. Use DRY and SOLID only when they make the code easier to read and change.
+
+- **DRY:** merge copies that change together for the same reason. Keep copies that only look alike; a shared helper with flags for each caller is worse than two plain functions.
+- **Single responsibility:** split a module when two reasons to change collide in it today, not when it could someday.
+- **Open/closed and dependency inversion:** add an interface only when a second real implementation exists or a test cannot run without the seam. One implementation means no interface.
+- **Interface segregation:** remove members no caller uses before you split anything.
+- **Liskov:** subclasses that throw "not supported" signal the wrong hierarchy; prefer composition or a plain function.
+
+When a principle and simplicity disagree, choose simplicity and say why in the finding.
+
 ## Public Interface
 
 - Expose domain verbs, not operation envelopes. Treat operations as data only when they genuinely are data.

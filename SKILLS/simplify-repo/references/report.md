@@ -1,6 +1,6 @@
 # Report
 
-Read during step 9. Keep it evidence-first and short per section. Offer `html-lab` when the user wants a shareable artifact.
+Read during step 9 in implement mode. Audit-only mode uses [audit-report.md](audit-report.md). Keep it evidence-first and short per section. Offer `html-report` when the user wants a shareable file.
 
 ## Sections
 

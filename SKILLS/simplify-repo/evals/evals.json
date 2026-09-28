@@ -7,7 +7,7 @@
       "expected_output": "The pass records a baseline, audits over-engineering, then implements verified deletion slices and reports results against the baseline instead of returning a recommendation list.",
       "files": [],
       "assertions": [
-        "It runs the repository's own gates and records each command and result as a baseline before editing.",
+        "It establishes a comparable baseline before editing, reusing current results and running a probe only when before/after behavior cannot otherwise be established.",
         "It classifies baseline failures as pre-existing, environment, credential, hardware, network, or product bug.",
         "It implements and verifies deletion slices rather than ending at an audit, proposal, or plan.",
         "Each slice removes the replaced machinery in the same slice, leaving no parallel old and new implementation.",
@@ -59,6 +59,21 @@
         "It names technical-debt-audit as the better fit for inventory-only work.",
         "It does not start deleting or refactoring product code for an audit-only request.",
         "If the user keeps this skill, it switches to audit-only mode and says so explicitly."
+      ]
+    },
+    {
+      "id": "audit-only-cleanup-with-migrations",
+      "prompt": "Usa $simplify-repo. Haz una auditoría profunda de limpieza: código muerto, lógica duplicada, capas de compatibilidad obsoletas y migraciones que quizá ya no hagan falta. Estima líneas a borrar y propón un plan ordenado. Audita primero, no edites código todavía.",
+      "expected_output": "The pass announces audit-only mode, edits no product code, and delivers grouped findings with exact paths, evidence, risk, confidence, and line estimates, separates needed migration history from obsolete support code, and ends with an ordered plan that names checks per step.",
+      "files": [],
+      "assertions": [
+        "It states that it runs in audit-only mode and makes no product edits or commits.",
+        "Each finding names exact files and code paths, why it is unnecessary, what to delete or simplify, behavior, data, and deployment risk, and a confidence level.",
+        "It checks usage before calling code dead and lists checked-and-kept false positives with evidence.",
+        "It groups findings into safe deletions, refactors, and changes that need a migration plan.",
+        "It keeps migration history that existing databases may still need apart from obsolete migration support code, and caps confidence when applied-state or data is not visible.",
+        "It gives a line estimate per group, marked as an estimate and not a goal.",
+        "It ends with an ordered plan of small steps, each naming its checks and rollback."
       ]
     },
     {

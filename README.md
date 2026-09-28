@@ -2,7 +2,7 @@
 
 Three Agent Skills for reducing cost: tests, CI, and repository architecture.
 
-Install the package, then invoke the skill that matches the work. `$simplify-tests` prunes a suite. `$simplify-ci` keeps the lightest required pipeline. `$simplify-repo` subtracts over-engineering and lands the smaller shape.
+Install the package, then invoke the skill that matches the work. `$simplify-tests` prunes a suite. `$simplify-ci` keeps the lightest required pipeline. `$simplify-repo` subtracts over-engineering and lands the smaller shape. Each one can also audit first and return a grouped cleanup plan without editing.
 
 ## Quick start
 

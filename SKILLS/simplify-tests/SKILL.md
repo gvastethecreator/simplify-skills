@@ -1,11 +1,16 @@
 ---
 name: simplify-tests
-description: "Test reduction: prune low-value tests, simplify fixtures and mocks, and reduce redundant test runs. Use for bloated suites or disproportionate testing in small projects."
+description: "Test reduction: prune low-value tests, simplify fixtures and mocks, and reduce redundant test runs, or audit-only with grouped findings and an ordered plan. Use for bloated suites, test audits, or disproportionate testing in small projects."
 ---
 
 # Simplify Tests
 
-Reduce the cost of detecting useful failures. Fewer files or test names alone do not prove improvement. Work within the requested project or suite; a review reports candidates, while a cleanup request authorizes supported local edits.
+Reduce the cost of detecting useful failures. Fewer files or test names alone do not prove improvement. Work within the requested project or suite.
+
+## Modes
+
+- **Clean up** (default for reduce, prune, or clean requests): steps 1–4.
+- **Audit-only**: the user asks for a review, audit, or plan, or says don't edit yet. Run steps 1–2 read-only and deliver the [audit report](#audit-report). No edits, no commits. Say so at the start. A later "go" runs steps 3–4 on the approved plan steps and reuses audit evidence that is still valid.
 
 ## 1. Find the cost and the contract
 
@@ -24,6 +29,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 - **Consolidate** cases only when their setup, action, and failure class are equivalent. Keep distinct error causes and boundary conditions distinguishable. A giant test or a large parameter table is not a reduction in work.
 - **Simplify** excessive mocks, fixture graphs, snapshots of implementation details, and test-only abstractions. Prefer a direct assertion at the cheapest existing public seam that observes the failure.
 - A flaky or slow test may protect unique behavior. Fix its owning setup or retain it with the problem recorded; do not delete or skip it just to make the suite green. For suite-only failures, use `test-suite-diagnostics` only when diagnosis is needed.
+- Check consumers before calling a fixture, helper, or snapshot unused: autouse and global setup, conftest or setup files, discovery config, snapshot files keyed by test name, shared factories, and scripts that select tests by name or tag.
 - Done: each removal has evidence of duplication, obsolescence, or lack of useful signal. Retain uncertain cases and state the evidence gap.
 
 ## 3. Apply one coherent reduction
@@ -42,6 +48,30 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 - Compare removed/retained behavior and setup complexity. Report counts when readily available. Claim a runtime gain only from comparable commands and environments; fewer tests alone is not timing evidence.
 - Inspect the changed path for orphaned references and accidental coverage gaps. Report what was removed or simplified, what still protects the behavior, checks run or skipped, and any retained uncertainty.
 - Done: reduction has evidence, discovery still works where changed, and the result states the limits of verification.
+
+## Audit Report
+
+Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. Offer `html-report` for a shareable file.
+
+Per finding:
+
+- **ID and group:** `D` safe removal, `C` consolidate or simplify, `G` needs a gate or policy decision.
+- **Exact paths:** test files, test names or line ranges, fixtures, helpers, snapshots, scripts, and the production behavior and caller each one claims to protect.
+- **Why:** duplicate of which retained test, removed behavior, cannot fail, asserts only mocks or internals, churn shown in git history.
+- **Change:** what to remove or simplify, and which retained test still catches the failure.
+- **Risk:** the failure that could go undetected, and any flaky or slow history.
+- **Confidence:** high when you read the assertions and setup on both sides and the retained test observes the same failure; medium when one gap remains (dynamic discovery, shared setup side effects, untraced production caller), named with its closing check; low is a lead only. Only high goes to `D`.
+- **Estimate:** tests, files, and lines removed. Runtime saved only from existing comparable timings; otherwise "unknown".
+
+Groups:
+
+- **D:** exact duplicates, tests of removed behavior, assertions that cannot fail, fixtures and snapshots with no consumer.
+- **C:** merge equivalent cases, simplify mocks and fixture graphs, move a check to a cheaper seam, drop repeated local commands.
+- **G:** required CI gates, coverage thresholds, release checks, runner or config changes with shared effects. Needs that scope; CI parts go to `simplify-ci`.
+
+Report sections: scope and coverage (suites and tests read, timings used, what was not inspected); summary table (ID, group, finding, paths, confidence, estimate, risk); findings by group; checked and kept, with the evidence that made each test unique; leads; totals per group; decisions owed.
+
+Ordered plan: `D` first, then `C`, then `G`. One step is one reviewable change. Per step: tests and files touched, the retained test that keeps each protection, checks after the step (discovery check when files, names, or filters change; focused run of the retained selection with the exact command; zero selected tests is a failure), rollback, and any decision needed first.
 
 ## Ordinary work after cleanup
 
