@@ -43,7 +43,7 @@ Prefer specialized skill:
 
 - `ponytail` when a keep-or-delete decision needs its simplification ladder.
 - `codebase-design` for module, seam, depth, interface vocabulary.
-- `explore-codebase` or `codebase-inspection` to map the repo in step 2.
+- `codebase-inspection` to map the repo in step 2.
 - `planning-with-files` for the ledger when the pass is long, multi-session, or AFK.
 - Reuse the active implementation workflow. Load `code-review` or `verification-quality-gate` for a distinct unresolved review or evidence need; do not start a new workflow per slice.
 - `research` only for official migration guides, deprecations, platform limits, security detail.
