@@ -26,6 +26,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 
 - **Keep** a unique check of supported behavior, a past bug that can recur, or a material boundary such as permissions, persistence, money, or recovery. Small projects can still have high-risk behavior.
 - **Remove** an exact duplicate, a check of removed behavior, an assertion that only restates a constant/type/library guarantee, or a test that cannot fail when the claimed product behavior breaks. A constant or default that carries a real permissions, persistence, or protocol contract can still need protection.
+- For a test claiming functional behavior, ask whether it still passes if the exercised callable only returns `undefined` and performs no work. Import-only success needs a specific packaging or import-side-effect contract; retain unique protection for that contract.
 - **Consolidate** cases only when their setup, action, and failure class are equivalent. Keep distinct error causes and boundary conditions distinguishable. A giant test or a large parameter table is not a reduction in work.
 - **Simplify** excessive mocks, fixture graphs, snapshots of implementation details, and test-only abstractions. Prefer a direct assertion at the cheapest existing public seam that observes the failure.
 - A flaky or slow test may protect unique behavior. Fix its owning setup or retain it with the problem recorded; do not delete or skip it just to make the suite green. For suite-only failures, use `test-suite-diagnostics` only when diagnosis is needed.
