@@ -16,6 +16,6 @@ Copy `SKILLS/simplify-tests`, `SKILLS/simplify-ci`, or `SKILLS/simplify-repo` in
 - [simplify-ci](SKILLS/simplify-ci/SKILL.md)
 - [simplify-repo](SKILLS/simplify-repo/SKILL.md)
 
-Failing checks stay `fix-ci`. Token permissions and Actions enable/disable stay `github-hygiene` when that skill is available.
+Each skill folder is self-contained and can be installed on its own. No additional skills are required. The procedures include failure diagnosis, scoped GitHub settings checks, interface review and report guidance where needed. Use the target project's existing runtime and tools; account settings and required gates still need the task's authority.
 
 License: [MIT](LICENSE).

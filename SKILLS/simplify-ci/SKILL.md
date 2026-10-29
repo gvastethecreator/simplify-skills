@@ -12,7 +12,7 @@ Keep the cheapest pipeline that still proves required gates. Job count, matrices
 - **Clean up** (default for reduce, prune, or clean requests): steps 1–4.
 - **Audit-only**: the user asks for a review, audit, or plan, or says don't edit yet. Run steps 1–2 read-only and deliver the [audit report](#audit-report). No edits, no commits, no GitHub settings changes. Say so at the start. A later "go" runs steps 3–4 on the approved plan steps and reuses audit evidence that is still valid.
 
-Failing checks are `fix-ci`. Do not delete a red job to obtain green. Suite reduction is `simplify-tests`. Actions enable/disable and token permissions are `github-hygiene`.
+This folder contains the full CI reduction procedure; no other skill is required. Repair a failing command before using it as retained proof. Read its failing log, reproduce the affected command locally when possible, and distinguish product, workflow and environment failures. Do not delete a red job to obtain green. Test-suite reduction and account administration require their own task scope.
 
 ## Default for any project
 
@@ -29,6 +29,7 @@ Start from nothing, then add only a required gate.
 ## 1. Find the cost and the contract
 
 - Inspect Git state, owner, visibility, Actions enabled state, workflow files, required status checks, branch protection/rulesets, and the local commands those jobs run. Reuse known GitHub reads.
+- For GitHub settings, use the authenticated `gh` CLI or available GitHub tools. Read the repository owner and visibility, `repos/<owner>/<repo>/actions/permissions`, and the default branch's required checks/rulesets. Keep Actions disabled on private personal repositories unless enabling is requested. Settings writes need task authority; after an authorized change, read back the effective state. Keep token and workflow permissions at the minimum needed by the retained job; never print credentials.
 - Map each job to the product failure it claims to catch and to the local command it duplicates. Use existing run logs and timings first. Do not start a full remote matrix to obtain a baseline.
 - Separate required merge/release gates from habitual jobs, path-unfiltered runs, and template leftovers.
 - Done: required gates, overlapping work, and the bounded target are clear.
@@ -61,7 +62,7 @@ For each job or step, ask: **Which plausible product failure does this catch, an
 
 ## Audit Report
 
-Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. Offer `html-report` for a shareable file.
+Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. If HTML is requested, render the same findings in a self-contained document with escaped content, a summary table, and evidence links.
 
 Per finding:
 

@@ -45,4 +45,4 @@ Review the full diff against the merge base before close-out. Confirm: only inte
 
 ## Honesty
 
-State which checks ran, which did not, and why. Hardware, network, credential, and external integration behavior counts as tested only when it was actually exercised. Use `verification-quality-gate` claim mode when a claim is contested and needs a repeatable artifact.
+State which checks ran, which did not, and why. Hardware, network, credential, and external integration behavior counts as tested only when it was actually exercised. For a contested claim, retain the exact input, command, environment, exit status and resulting artifact so the check can be repeated. Label missing evidence as unverified.

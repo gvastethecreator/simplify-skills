@@ -26,31 +26,18 @@ Optimize for the product that exists today. Not for the platform someone imagine
 - a rewrite request where the honest answer is deletion, not another layer
 - a deep cleanup audit: dead or unreachable code, duplicate logic, obsolete compatibility layers, schema and migration support that may no longer be needed (audit-only mode)
 
-Prefer specialized skill:
+For a narrow test, CI, interface, maintenance, or bug request, keep the work on that surface. Do not turn it into a repository-wide refactor. Repair failing checks before treating them as evidence for a deletion.
 
-- `ponytail`: one change, one simplicity decision.
-- `simplify-tests`: suite reduction. No architecture change.
-- `simplify-ci`: pipeline reduction. No architecture change. Failing checks stay `fix-ci`.
-- `technical-debt-audit`: debt inventory from docs, ADRs, and plans against code; priorities. No deletion audit, no implementation.
-- `project-maintenance`: root clutter, accidental git-history junk, stale docs to `.scratch`, logs, scripts/deps, dead files, and in-architecture low-value code. No architecture change.
-- `improve-codebase-architecture`: approval-gated batch of N improvements with value reports.
-- `project-tune-up`: existing-repo puesta a punto. `rust-http-api`, `rust-cli`, `bevy-app`, `tauri-desktop` for those contracts.
-- `improve-ui`: interface-only work.
-- `diagnose`: one hard bug.
-- `scope-control`: user wants the minimal patch and nothing else.
+## Self-contained workflow
 
-## Compose
+This folder includes the mapping, design, deletion, interface, reporting and verification guidance needed for the pass. No other skill is required.
 
-- `ponytail` when a keep-or-delete decision needs its simplification ladder.
-- `codebase-design` for module, seam, depth, interface vocabulary.
-- `codebase-inspection` to map the repo in step 2.
-- `planning-with-files` for the ledger when the pass is long, multi-session, or AFK.
-- Reuse the active implementation workflow. Load `code-review` or `verification-quality-gate` for a distinct unresolved review or evidence need; do not start a new workflow per slice.
-- `research` only for official migration guides, deprecations, platform limits, security detail.
-- `improve-ui`, `better-accessibility`, `review-animations` for the interface pass.
-- `to-tickets` / `to-spec` for work that genuinely cannot land in this pass.
-- `html-report` when the user wants the final or audit report as a shareable HTML file.
-- `hablar-claro` for operator chat.
+- Start a keep-or-delete decision with the supported behavior and its consumers. Try deletion, direct calls and one clear owner before adding an abstraction.
+- Reuse the project's working record. For long work, keep objective, decisions, changed paths, valid checks, blockers and next action in that record.
+- Use the bundled references at the relevant process step. Keep one implementation workflow and one evidence record across slices.
+- Consult official migration guides or platform documentation only when a concrete version or support question needs external evidence.
+- Record work that cannot safely land in the existing tracker with exact paths, impact, missing evidence and next action. Remote tracker writes need authority.
+- Use the operator's language. Keep reports concrete and preserve commands, paths, identifiers and uncertainty.
 
 ## Hard Rules
 
@@ -88,7 +75,7 @@ Internal layers do not need to re-defend values already validated at a clear bou
 
 2. Map product and ownership.
    - Product purpose, main user flows, entry points, routes and how they are mounted, runtime targets, packages, public APIs, dependencies, state and persistence owners, database schema source and migration runner, UI entry points, design tokens, tests, build, CI, scripts, docs, ADRs, open issues touching the area.
-   - For a large repo, map with `codebase-inspection` or an existing code map first, then read only the flows that matter.
+   - For a large repo, use an existing current code map or search entry points, imports, callers, tests and configuration with the repo's search tools. Record each affected flow and its state owner, then read only those paths.
    - Which files are authoritative and which only restate them.
    - Done: you can name every real flow and who owns its state.
 
@@ -121,7 +108,7 @@ Internal layers do not need to re-defend values already validated at a clear bou
 
 7. Interface pass.
    - Only when the repo ships a UI. Flow completeness, token and theme use, layout and overflow, accessibility, feedback states, animation lifecycles, gallery coverage.
-   - Read [references/interface-pass.md](references/interface-pass.md), and route the deep work to `improve-ui`, `better-accessibility`, `review-animations`.
+   - Follow [references/interface-pass.md](references/interface-pass.md) for layout, accessibility, feedback and animation checks in the running application.
    - Done: every reviewed screen and state either fixed or recorded with a reason.
 
 8. Verify against baseline, then re-review for maintainability.

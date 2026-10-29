@@ -29,7 +29,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 - For a test claiming functional behavior, ask whether it still passes if the exercised callable only returns `undefined` and performs no work. Import-only success needs a specific packaging or import-side-effect contract; retain unique protection for that contract.
 - **Consolidate** cases only when their setup, action, and failure class are equivalent. Keep distinct error causes and boundary conditions distinguishable. A giant test or a large parameter table is not a reduction in work.
 - **Simplify** excessive mocks, fixture graphs, snapshots of implementation details, and test-only abstractions. Prefer a direct assertion at the cheapest existing public seam that observes the failure.
-- A flaky or slow test may protect unique behavior. Fix its owning setup or retain it with the problem recorded; do not delete or skip it just to make the suite green. For suite-only failures, use `test-suite-diagnostics` only when diagnosis is needed.
+- A flaky or slow test may protect unique behavior. Fix its owning setup or retain it with the problem recorded; do not delete or skip it just to make the suite green. For a suite-only failure, compare the failing case alone and with its smallest known predecessor set. Inspect leaked mocks, global state, environment variables, shared files, timers, and cleanup before changing the test. Preserve the failing command and order; do not add retries to hide it.
 - Check consumers before calling a fixture, helper, or snapshot unused: autouse and global setup, conftest or setup files, discovery config, snapshot files keyed by test name, shared factories, and scripts that select tests by name or tag.
 - Done: each removal has evidence of duplication, obsolescence, or lack of useful signal. Retain uncertain cases and state the evidence gap.
 
@@ -38,7 +38,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 - Preserve unrelated work and production behavior. Remove the supported candidates and their now-unused fixtures, helpers, snapshots, imports, or scripts after checking consumers.
 - Reuse or improve a retained test before adding another. Add a replacement only when it preserves useful behavior coverage more simply; zero new tests is a valid result.
 - Keep setup, action, and assertions together. Use existing helpers when they shorten the case; a little clear duplication can cost less than a generic test DSL or factory system.
-- Reduce repeated local commands and overlapping test layers within scope. Choose one aggregate command or its relevant parts, not both. Changing CI, required coverage thresholds, or release gates needs that scope and `simplify-ci`; do not weaken them to hide removed proof.
+- Reduce repeated local commands and overlapping test layers within scope. Choose one aggregate command or its relevant parts, not both. Changing CI, required coverage thresholds, or release gates needs explicit scope. Trace required-check names, downstream jobs and release consumers before changing a gate; do not weaken it to hide removed proof.
 - Do not introduce a runner, dependency, fixture framework, production API, or architecture refactor to make this cleanup possible. Stop when further reduction would lose distinct protection or add complexity.
 - Done: the diff removes maintenance or execution work and preserves each retained contract.
 
@@ -52,7 +52,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 
 ## Audit Report
 
-Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. Offer `html-report` for a shareable file.
+Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. If the user requests HTML, render the same findings as a self-contained document with escaped content, a summary table, and links to the evidence.
 
 Per finding:
 
@@ -68,7 +68,7 @@ Groups:
 
 - **D:** exact duplicates, tests of removed behavior, assertions that cannot fail, fixtures and snapshots with no consumer.
 - **C:** merge equivalent cases, simplify mocks and fixture graphs, move a check to a cheaper seam, drop repeated local commands.
-- **G:** required CI gates, coverage thresholds, release checks, runner or config changes with shared effects. Needs that scope; CI parts go to `simplify-ci`.
+- **G:** required CI gates, coverage thresholds, release checks, runner or config changes with shared effects. Needs that scope and an explicit plan for required-check settings and downstream consumers.
 
 Report sections: scope and coverage (suites and tests read, timings used, what was not inspected); summary table (ID, group, finding, paths, confidence, estimate, risk); findings by group; checked and kept, with the evidence that made each test unique; leads; totals per group; decisions owed.
 

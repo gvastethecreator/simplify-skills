@@ -1,6 +1,6 @@
 # Interface Pass
 
-Read during step 7, only when the repo ships a UI. Review the running application, not isolated screenshots. Route depth to `improve-ui`, `better-accessibility`, `review-animations`.
+Read during step 7, only when the repo ships a UI. Review the running application with the available browser or native UI tools. Exercise affected actions and capture the relevant rendered states. The checks below do not require another skill.
 
 Cover every route, view, modal, panel, form, and meaningful state.
 

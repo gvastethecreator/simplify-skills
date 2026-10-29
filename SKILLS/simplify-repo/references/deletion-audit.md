@@ -36,7 +36,7 @@ Only high-confidence findings go into the safe-deletion group.
 
 ## Line Estimate
 
-- Count lines per finding: whole files deleted, plus line ranges removed, minus replacement lines. Use `git ls-files` with a line count, or `codebase-inspection`, not guesses.
+- Count lines per finding: whole files deleted, plus line ranges removed, minus replacement lines. Use `git ls-files` with a line count or the scoped `git diff --numstat`; do not guess.
 - Report separately: source, tests, migrations and schema, config and scripts, docs. Exclude generated files and lockfiles, or list them apart.
 - Sum per group and in total. Mark it as an estimate. It informs the plan; it is not the goal.
 

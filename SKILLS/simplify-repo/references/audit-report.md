@@ -2,7 +2,7 @@
 
 Read at the end of step 5 in audit-only mode. Evidence first, short per finding. The report is the deliverable and the ledger for a later implement pass.
 
-Deliver in chat when it is short. For a long audit, write it to the path the user names, or to the repo's existing docs or plans folder, and summarize in chat. Offer `html-report` when the user wants a shareable file.
+Deliver in chat when it is short. For a long audit, write it to the path the user names, or to the repo's existing docs or plans folder, and summarize in chat. If HTML is requested, render the same findings as a self-contained document with escaped content, a summary table and evidence links.
 
 ## Sections
 
