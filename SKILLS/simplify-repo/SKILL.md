@@ -13,7 +13,7 @@ This is an implementation skill. Ending at an audit, proposal, or recommendation
 ## Modes
 
 - **Implement** (default): steps 1–9.
-- **Audit-only**: the user says audit first, don't edit yet, report only, solo auditoría, or asks for a cleanup plan. Run steps 1–5 read-only, then write the audit report per [references/audit-report.md](references/audit-report.md). No product edits, no commits, no tracker writes unless asked. Say at the start that the pass runs in audit-only mode. A later "go" runs implement mode on the approved plan steps and reuses the audit evidence that is still valid.
+- **Audit-only**: the user says audit first, don't edit yet, report only, solo auditoría, or asks for a cleanup plan. Run steps 1–5 read-only, then present the audit report per [references/audit-report.md](references/audit-report.md). No product edits, no commits, no tracker writes unless asked. Say at the start that the pass runs in audit-only mode. A later "go" runs implement mode on the approved plan steps and reuses the audit evidence that is still valid.
 
 Optimize for the product that exists today. Not for the platform someone imagined.
 
@@ -45,9 +45,9 @@ This folder includes the mapping, design, deletion, interface, reporting and ver
 - Start with `git status -sb` and the merge base. Preserve unrelated, user, and other-agent changes.
 - No `reset --hard`, `clean`, `restore`, force-push, rebase, or history rewrite without explicit user consent.
 - No repo-wide reformat, rename sweep, or unrelated cleanup. It hides the real diff.
-- No deletion without the evidence bar below.
-- No parallel architectures at the end of a slice. Replacement lands, old machinery goes.
-- No compatibility wrapper unless backward compatibility is a current, stated requirement.
+- No deletion without the evidence bar below and the authority required for the exact action. File deletion requires explicit authorization.
+- Avoid leaving redundant implementations after an authorized cutover. Retain supported paths when a staged migration or approval still requires them.
+- Preserve supported public contracts. Do not add a compatibility wrapper for a merely hypothetical requirement.
 - No new dependency to replace a few straightforward lines. No custom framework to avoid one dependency call.
 - Never fake verification, commits, pushes, or pull requests. Never claim hardware, network, credential, or integration behavior was exercised when it was not.
 - Secrets stay out of logs, diffs, reports, and commits.
@@ -70,8 +70,8 @@ Internal layers do not need to re-defend values already validated at a clear bou
 1. Frame and protect.
    - Confirm scope (whole repo or named surface), mode (implement, default; audit-only on request), and any blocking repo convention.
    - `git status -sb`, current branch, merge base, pre-existing modified and untracked files.
-   - Open or create the ledger in the repo's existing planning, spec, or issue system. Do not build a parallel tracker. In audit-only mode the audit report is the ledger.
-   - Done: scope, mode, protected pre-existing changes, and ledger location written down.
+   - Reuse the existing working record when the work needs tracking. Create a durable plan or ticket only when requested or required by the tracker contract; use simple English.
+   - Done: scope, mode, protected pre-existing changes, and any required working record are clear.
 
 2. Map product and ownership.
    - Product purpose, main user flows, entry points, routes and how they are mounted, runtime targets, packages, public APIs, dependencies, state and persistence owners, database schema source and migration runner, UI entry points, design tokens, tests, build, CI, scripts, docs, ADRs, open issues touching the area.
@@ -82,7 +82,7 @@ Internal layers do not need to re-defend values already validated at a clear bou
 3. Baseline.
    - Reuse current baseline results and inspect the relevant contracts. Run a baseline probe only when before/after behavior cannot otherwise be established or its answer determines the next edit. Do not run every available gate before editing.
    - Classify every failure: pre-existing, environment, missing credential, hardware, network, or reproducible product bug.
-   - Done: a comparable baseline exists. Later results are diffed against it, and pre-existing failures are never blamed on this pass.
+   - Done: relevant baseline evidence is available where comparison is needed; gaps are explicit. Never blame pre-existing failures on this pass.
 
 4. Trace flows, then audit for deletion.
    - Per flow: entry point, domain operation, state transitions, validation boundary, persistence, network, protocol mapping, error path, recovery path, user-visible feedback.
@@ -120,17 +120,17 @@ Internal layers do not need to re-defend values already validated at a clear bou
 9. Close out.
    - Update docs, specs, tickets, and ADRs to the implemented system. Archive or mark superseded plans without rewriting their history.
    - Commit, push, or update a PR only within explicit authorization. Credentials establish capability, not consent. Keep authorized commits independently reviewable.
-   - Final report per [references/report.md](references/report.md), including machinery you deliberately did not add and the condition that would justify it later.
+   - Final report per [references/report.md](references/report.md), limited to the changes, evidence, and remaining decisions that matter.
    - Done: docs match code, tracker matches reality, report states truthfully what ran and what did not.
 
 ## Deletion Evidence Bar
 
-Delete when at least one holds, and the evidence is in the transcript:
+After obtaining any required authority, delete only when at least one condition holds and the evidence is in the working context:
 
 - No caller: symbol and string search across source, tests, config, scripts, docs, and generated call sites, plus dynamic-access patterns for the language.
 - Export with no consumer inside or outside the repo, and not a supported public API.
 - Behavior fully covered by a retained path you traced end to end.
-- Generated, cached, or artifact file that is ignored or should be.
+- Generated file with established ownership and a verified regeneration path, after checking that it contains no protected or unique data. Git ignore status alone is not proof that deletion is safe.
 - Doc, test, or fixture that only preserves machinery this pass removed.
 - Schema or migration support code that meets the database bar in [references/migrations.md](references/migrations.md).
 
@@ -144,7 +144,7 @@ Age, naming, and vibes are not evidence.
 
 Continue through routine phases without asking. Pause only for: destructive or irreversible action, two equally plausible product behaviors, a breaking change to a supported public contract with unclear intent, missing credentials or hardware or services, or a repo instruction that requires approval.
 
-When blocked: finish everything independent of the blocker, record the blocker and the missing evidence, name the smallest decision needed, file it in the tracker, and never fabricate the result.
+When blocked: finish independent work, record the blocker and missing evidence in the existing working record, name the smallest decision needed, and never fabricate the result. Update a tracker only within its contract and authorized scope.
 
 ## Anti-Goals
 
@@ -159,4 +159,4 @@ When blocked: finish everything independent of the blocker, record the blocker a
 
 Audit-only mode: the audit report per [references/audit-report.md](references/audit-report.md): scope and coverage; findings grouped into safe deletions, refactors, and changes that need a migration plan; checked and kept; line estimate; ordered cleanup plan with checks per step; decisions owed.
 
-Implement mode: terse final report, expanded per [references/report.md](references/report.md): status; what changed and why; baseline versus final gates; old and new call paths; what was removed (concepts, states, branches, files, exports, dependencies, config); public API and breaking changes; interface fixes; docs and tracker updates; branch, commits, PR status; remaining risks and manual checks; machinery deliberately omitted with its reinstatement trigger.
+Implement mode: a concise report per [references/report.md](references/report.md) covering changes, relevant proof, skipped checks, and material risks.

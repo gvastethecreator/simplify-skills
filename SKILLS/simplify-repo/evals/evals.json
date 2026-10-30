@@ -10,7 +10,7 @@
         "It establishes a comparable baseline before editing, reusing current results and running a probe only when before/after behavior cannot otherwise be established.",
         "It classifies baseline failures as pre-existing, environment, credential, hardware, network, or product bug.",
         "It implements and verifies deletion slices rather than ending at an audit, proposal, or plan.",
-        "Each slice removes the replaced machinery in the same slice, leaving no parallel old and new implementation.",
+        "Each authorized slice removes replaced machinery when safe; a supported staged migration or missing deletion authority remains explicit.",
         "The final report separates fixed baseline failures, remaining baseline failures, new failures, and manual checks still owed."
       ]
     },
@@ -53,10 +53,10 @@
     {
       "id": "routes-away-when-scope-is-narrower",
       "prompt": "Solo quiero un inventario de deuda técnica priorizado, sin tocar código.",
-      "expected_output": "The workflow routes the request to the audit-only skill instead of running an implementation pass, or runs in audit-only mode when the user prefers this skill.",
+      "expected_output": "The workflow handles the request in its own audit-only mode without product edits or a required sibling skill.",
       "files": [],
       "assertions": [
-        "It names technical-debt-audit as the better fit for inventory-only work.",
+        "It handles inventory-only work in read-only mode without requiring another skill.",
         "It does not start deleting or refactoring product code for an audit-only request.",
         "If the user keeps this skill, it switches to audit-only mode and says so explicitly."
       ]

@@ -2,7 +2,7 @@
 
 Read during step 7, only when the repo ships a UI. Review the running application with the available browser or native UI tools. Exercise affected actions and capture the relevant rendered states. The checks below do not require another skill.
 
-Cover every route, view, modal, panel, form, and meaningful state.
+Cover the affected routes, views, controls, and meaningful states; expand the scope only when the change or project contract requires it.
 
 ## Flow Completeness
 
@@ -13,7 +13,7 @@ Cover every route, view, modal, panel, form, and meaningful state.
 ## Visual Coherence
 
 - Design tokens own color, spacing, radius, elevation. No hard-coded value where a token exists.
-- Light and dark themes both behave.
+- Each supported theme behaves as intended.
 - Typography, icons, density, alignment, and surface hierarchy stay consistent across screens.
 
 ## Layout
@@ -38,10 +38,10 @@ Cover every route, view, modal, panel, form, and meaningful state.
 
 - Entrances and exits complete their lifecycle. Components do not vanish before exit finishes.
 - Correct `transform-origin`, reversible transitions, no stale state after interruption, no loop discontinuity.
-- Transform and opacity over layout-affecting properties. Consistent easing and duration. No repaint cost for decoration.
+- Prefer transform and opacity when appropriate. Keep easing and duration consistent; measure rendering cost when it matters.
 
 ## Gallery
 
-Every reusable component and meaningful variant appears in the existing gallery, Storybook, playground, or showcase, including default, hover, focus, active, disabled, loading, empty, error, success, long content, compact viewport, theme variants, and animation entry and exit.
+When an existing gallery covers changed components, verify the affected variants and states that the change can impact. Do not add unrelated gallery coverage by default.
 
 Do not build a second showcase when one exists.

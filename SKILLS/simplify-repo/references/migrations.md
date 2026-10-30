@@ -17,7 +17,7 @@ Read during steps 2 and 4 when the repo has a database, stored files with a form
 Put each item in one class.
 
 1. **History still needed.** A migration that any supported database may not have applied yet, or that a fresh database needs because no baseline exists. Keep it. Never edit an applied migration file; many tools checksum them.
-2. **Squashable history.** Every supported database is past point N, and fresh databases can start from a baseline. This is an `M` finding: generate the baseline from the real schema, mark it applied on existing databases the way the tool expects, and prove that a fresh build matches a dump of the current production schema.
+2. **Squashable history.** Every supported database is past point N, and fresh databases can start from a baseline. This is an `M` finding: generate the baseline from the real schema, mark it applied on existing databases the way the tool expects, and compare a fresh build with an authorized representative current schema. If that evidence is unavailable, keep the decision pending.
 3. **Obsolete support code.** One-shot backfills and data fixers already applied everywhere, dual-write or dual-read shims after a finished cutover, readers for old column or file formats, compatibility views, rollout flags for a finished migration, custom runner wrappers that duplicate the tool. Group `D` when no database can still hold the old shape and no schema change follows; otherwise `M`.
 4. **Dead schema.** Tables, columns, indexes, enums, triggers, or views with no reader and no writer. Removal is always `M`.
 5. **Drift.** ORM, migrations, and live schema disagree. Report it with the exact difference. Do not delete to hide it.
@@ -45,12 +45,11 @@ Without access to applied-state or data, confidence is at most medium. Name the 
 
 ## Plan Shape For M Findings
 
-Use expand and contract. Each step deploys alone and verifies before the next.
+Use a staged transition when existing data or clients need it. Establish the old and new contracts, supported versions, backups, and rollback first. Then, as applicable:
 
-1. Stop writes to the old shape. Deploy.
-2. Stop reads from the old shape. Deploy.
-3. Verify with a query that nothing uses or holds the old shape. Wait the agreed period.
-4. Back up the object, then drop it in a new forward migration.
-5. Delete the support code and flags that served the old shape.
+1. Prepare the new shape without breaking existing readers and writers.
+2. Migrate or backfill data and move consumers in an order that preserves consistency. Verify each step against the actual deployment and concurrency model.
+3. Confirm that supported clients and data no longer require the old shape. Wait any agreed period.
+4. After explicit authorization and a verified recovery path, remove the old shape in a forward migration and retire only the support code no longer needed.
 
-Per step, state: files, migration or deploy order, verification query or check, rollback, and owner sign-off when data is involved.
+Each step names its files, deploy order, checks, rollback, and owner sign-off. Adapt the order to the actual system; do not stop old writes before the replacement is ready. See the [Prisma expand-and-contract example](https://docs.prisma.io/docs/guides/database/data-migration) for one implementation.

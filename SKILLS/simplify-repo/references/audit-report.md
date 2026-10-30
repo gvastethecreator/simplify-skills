@@ -2,7 +2,7 @@
 
 Read at the end of step 5 in audit-only mode. Evidence first, short per finding. The report is the deliverable and the ledger for a later implement pass.
 
-Deliver in chat when it is short. For a long audit, write it to the path the user names, or to the repo's existing docs or plans folder, and summarize in chat. If HTML is requested, render the same findings as a self-contained document with escaped content, a summary table and evidence links.
+Deliver findings in chat or the existing working record. Create a durable report or plan only when requested or required by the tracker contract; use simple English. If HTML is requested, render the findings with escaped content and evidence links.
 
 ## Sections
 
@@ -10,7 +10,7 @@ Deliver in chat when it is short. For a long audit, write it to the path the use
 
 **System map.** Short: entry points and routes, main flows, module and persistence owners, schema source, migration runner, supported environments. Only what the findings need.
 
-**Summary table.** One row per finding:
+**Summary table.** Use when it helps compare findings or is requested:
 
 | ID | Group | Finding | Paths | Confidence | Est. lines | Risk |
 |----|-------|---------|-------|------------|-----------|------|
@@ -29,7 +29,7 @@ Each finding uses the per-finding record in [deletion-audit.md](deletion-audit.m
 
 **Leads.** Low-confidence items with the check that would confirm or clear each one.
 
-**Line estimate.** Per group and total, split into source, tests, migrations and schema, config and scripts, docs. Also count concepts removed: modules, dependencies, routes, tables, flags, config keys. State that it is an estimate and not the goal.
+**Line estimate.** When requested or useful, estimate from scoped evidence and label it as an estimate, not a goal.
 
 **Ordered cleanup plan.** Small, reviewable steps; one step is one reviewable change. Order:
 
@@ -41,7 +41,7 @@ Per step:
 
 - findings covered and files touched
 - depends on which earlier step
-- checks after the step: the repo's own commands for typecheck, lint, focused tests on retained behavior, build, fresh database build and schema diff for migration steps, a runtime smoke check for touched flows. Name exact commands when the repo has them.
+- checks after the step: choose the smallest relevant existing checks; include database or runtime proof when the changed contract requires it. Name exact commands when known.
 - rollback: plain revert, or the data rollback for M steps
 - decision or sign-off needed before the step, if any
 

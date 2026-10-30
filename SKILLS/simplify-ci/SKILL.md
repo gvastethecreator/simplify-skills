@@ -29,7 +29,7 @@ Start from nothing, then add only a required gate.
 ## 1. Find the cost and the contract
 
 - Inspect Git state, owner, visibility, Actions enabled state, workflow files, required status checks, branch protection/rulesets, and the local commands those jobs run. Reuse known GitHub reads.
-- For GitHub settings, use the authenticated `gh` CLI or available GitHub tools. Read the repository owner and visibility, `repos/<owner>/<repo>/actions/permissions`, and the default branch's required checks/rulesets. Keep Actions disabled on private personal repositories unless enabling is requested. Settings writes need task authority; after an authorized change, read back the effective state. Keep token and workflow permissions at the minimum needed by the retained job; never print credentials.
+- For GitHub settings, use the authenticated `gh` CLI or available GitHub tools. Read the repository owner and visibility, `repos/<owner>/<repo>/actions/permissions`, and the default branch's required checks/rulesets. Keep Actions disabled on private personal repositories unless enabling is requested. Settings writes need task authority; after an authorized change, read back the effective state. Identify the minimum token and workflow permissions needed by the retained job. Change permissions only within authorized scope; never print credentials.
 - Map each job to the product failure it claims to catch and to the local command it duplicates. Use existing run logs and timings first. Do not start a full remote matrix to obtain a baseline.
 - Separate required merge/release gates from habitual jobs, path-unfiltered runs, and template leftovers.
 - Done: required gates, overlapping work, and the bounded target are clear.
@@ -47,8 +47,8 @@ For each job or step, ask: **Which plausible product failure does this catch, an
 
 ## 3. Apply one coherent reduction
 
-- Preserve unrelated work and production behavior. Edit workflow YAML, required-check names, and matching docs together. After removing jobs, drop now-unused secrets, caches, service containers, and setup steps.
-- Prefer deleting a workflow or job over adding `if` filters that keep dead paths. Path filters are valid when they prevent unrelated packages from paying a full install.
+- Preserve unrelated work and production behavior. Align workflow YAML and matching docs with authorized required-check changes. Remove unused workflow cache references, service containers, and setup steps; identify unused secrets for separately authorized remote removal.
+- Remove redundant jobs instead of keeping dead paths behind `if` filters. Deleting an entire workflow file requires explicit authority. Path filters can prevent unrelated packages from paying a full install.
 - Do not add a runner, coverage service, matrix, reusable workflow, or composite action to make this cleanup possible. Changing branch-protection required checks needs that scope.
 - Stop when further cuts would lose a required unique gate or add machinery.
 - Done: the diff removes queued work and preserves each retained gate.
@@ -56,13 +56,13 @@ For each job or step, ask: **Which plausible product failure does this catch, an
 ## 4. Verify once and report the limits
 
 - Validate workflow YAML and confirm job/step names that protection still requires. Run the retained local command that the remaining job will invoke. Do not wait on a new remote matrix to claim the reduction.
-- On a public repo with Actions enabled, one successful run of the retained workflow is enough when the change can affect that job. Reuse a current green run when the workflow did not change. Private personal repos stay disabled unless the user asked to run Actions.
+- When a public workflow change needs remote proof, use an applicable existing run or obtain authority before triggering one. Reuse a current green run when the workflow did not change. Private personal repos stay disabled unless the user asked to run Actions.
 - Report removed jobs/steps, retained gates, local commands run or skipped, and any required-check rename still owed in GitHub settings.
 - Done: reduction has evidence, retained gates still have an owner, and the result states what was not exercised remotely.
 
 ## Audit Report
 
-Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. If HTML is requested, render the same findings in a self-contained document with escaped content, a summary table, and evidence links.
+Deliver findings in chat or the existing task record. Create a durable report or plan only when requested or required by the tracker contract; use simple English. If HTML is requested, render the findings with escaped content and evidence links.
 
 Per finding:
 
@@ -80,9 +80,9 @@ Groups:
 - **C:** merge into the existing aggregate command, add path filters that skip unrelated installs, drop matrix dimensions with no supported target.
 - **G:** required-check renames or removals in branch protection or rulesets, release, deploy, or publish workflows, mandatory security scans, secret deletion, Actions enable state, larger runners.
 
-Report sections: scope and coverage (repo, owner, visibility, Actions state, workflows read, run history used, what was not readable); summary table (ID, group, finding, paths, confidence, estimate, risk); findings by group; checked and kept, with the unique gate each job owns; leads; totals per group; decisions owed.
+Include the relevant scope, coverage, evidence, retained gates, gaps, risks, and decisions. Use a table only when it helps compare findings or is requested.
 
-Ordered plan: `D` first, then `C`, then `G`. One step is one reviewable change. Per step: files and jobs touched, the retained gate for each removed job, checks after the step (YAML validation with the repo's existing linter if any, the retained local command, one remote run only on a public repo when the step affects that job), required-check settings to change and who changes them, rollback, and any decision needed first.
+Ordered plan: `D` first, then `C`, then `G`. One step is one reviewable change. Per step: files and jobs touched, the retained gate for each removed job, checks after the step (YAML validation with the repo's existing linter if any, the retained local command, an authorized remote run on a public repo only when needed), required-check settings to change and who changes them, rollback, and any decision needed first.
 
 ## Ordinary work after cleanup
 

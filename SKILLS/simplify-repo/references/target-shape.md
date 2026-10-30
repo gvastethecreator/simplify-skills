@@ -6,7 +6,7 @@ Read during step 5, before writing replacements. Design for the product that exi
 
 1. Public domain interface with meaningful verbs.
 2. One implementation per real backend or platform.
-3. One persistence module when durable state exists.
+3. Clear ownership for each durable store.
 4. Thin entry points: CLI, route, UI, job.
 5. Protocol logic owned by the backend that speaks it.
 6. Tests through the public interface, plus focused protocol tests where wire behavior matters.
@@ -19,7 +19,7 @@ KISS wins ties. Use DRY and SOLID only when they make the code easier to read an
 
 - **DRY:** merge copies that change together for the same reason. Keep copies that only look alike; a shared helper with flags for each caller is worse than two plain functions.
 - **Single responsibility:** split a module when two reasons to change collide in it today, not when it could someday.
-- **Open/closed and dependency inversion:** add an interface only when a second real implementation exists or a test cannot run without the seam. One implementation means no interface.
+- **Open/closed and dependency inversion:** keep an interface when it protects a supported contract or a useful boundary. Remove it when evidence shows it adds indirection without a current purpose.
 - **Interface segregation:** remove members no caller uses before you split anything.
 - **Liskov:** subclasses that throw "not supported" signal the wrong hierarchy; prefer composition or a plain function.
 
@@ -34,9 +34,7 @@ When a principle and simplicity disagree, choose simplicity and say why in the f
 
 ## Selection And Extension
 
-- Fixed set of backends: a switch.
-- Dynamic registry only when third parties register implementations at runtime.
-- No capability map for static features.
+- Choose the simplest dispatch that fits the real backends and extension contract. Avoid a registry or capability map when it has no demonstrated use.
 
 ## Concurrency
 
@@ -59,6 +57,6 @@ When a principle and simplicity disagree, choose simplicity and say why in the f
 
 ## Documentation Of The Shape
 
-The primary architecture doc should state: public interface, module ownership, call paths, supported lifecycle, persistence owner, validation boundaries, error model, backend ownership, intentional single-process or sequential assumptions, deferred features, and the condition that would justify adding deferred machinery.
+Update an existing architecture doc when the changed contract affects it. Include the relevant interface, ownership, flow, and limitations; do not create a document solely to fill a template.
 
-Use JSDoc or the project's equivalent for public APIs, non-obvious domain operations, invariants, trust boundaries, protocol mappings, persistence guarantees, and subtle lifecycle behavior. Not for restating the line below it.
+Follow the project's documentation conventions for public APIs and non-obvious behavior. Document invariants and limits where they help a reader; do not restate the code.

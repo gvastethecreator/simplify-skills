@@ -35,7 +35,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 
 ## 3. Apply one coherent reduction
 
-- Preserve unrelated work and production behavior. Remove the supported candidates and their now-unused fixtures, helpers, snapshots, imports, or scripts after checking consumers.
+- Preserve unrelated work and production behavior. Consolidate supported candidates after checking consumers. Obtain explicit authority before deleting files, including unused fixtures, helpers, snapshots, or scripts.
 - Reuse or improve a retained test before adding another. Add a replacement only when it preserves useful behavior coverage more simply; zero new tests is a valid result.
 - Keep setup, action, and assertions together. Use existing helpers when they shorten the case; a little clear duplication can cost less than a generic test DSL or factory system.
 - Reduce repeated local commands and overlapping test layers within scope. Choose one aggregate command or its relevant parts, not both. Changing CI, required coverage thresholds, or release gates needs explicit scope. Trace required-check names, downstream jobs and release consumers before changing a gate; do not weaken it to hide removed proof.
@@ -52,7 +52,7 @@ For each candidate, ask: **Which plausible product failure does this detect, and
 
 ## Audit Report
 
-Deliver in chat when short. For a long audit, write it to the path the user names or the repo's docs or plans folder, and summarize in chat. If the user requests HTML, render the same findings as a self-contained document with escaped content, a summary table, and links to the evidence.
+Deliver findings in chat or the existing task record. Create a durable report or plan only when requested or required by the tracker contract; use simple English. If HTML is requested, render the findings with escaped content and evidence links.
 
 Per finding:
 
@@ -70,7 +70,7 @@ Groups:
 - **C:** merge equivalent cases, simplify mocks and fixture graphs, move a check to a cheaper seam, drop repeated local commands.
 - **G:** required CI gates, coverage thresholds, release checks, runner or config changes with shared effects. Needs that scope and an explicit plan for required-check settings and downstream consumers.
 
-Report sections: scope and coverage (suites and tests read, timings used, what was not inspected); summary table (ID, group, finding, paths, confidence, estimate, risk); findings by group; checked and kept, with the evidence that made each test unique; leads; totals per group; decisions owed.
+Include the relevant scope, coverage, evidence, retained protections, gaps, risks, and decisions. Use a table only when it helps compare findings or is requested.
 
 Ordered plan: `D` first, then `C`, then `G`. One step is one reviewable change. Per step: tests and files touched, the retained test that keeps each protection, checks after the step (discovery check when files, names, or filters change; focused run of the retained selection with the exact command; zero selected tests is a failure), rollback, and any decision needed first.
 

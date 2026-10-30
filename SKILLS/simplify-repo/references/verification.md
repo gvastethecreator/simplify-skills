@@ -40,8 +40,8 @@ Review the full diff against the merge base before close-out. Confirm: only inte
 - Manifests and lockfiles accurate and synchronized. Engine requirements and workspace references valid. Scripts concise and real.
 - `.gitignore` covers dependencies, build output, temp files, generated logs, caches, coverage, editor and OS noise, local env files, secrets, runtime data. It must not ignore files needed for a reproducible build.
 - Check for accidentally tracked generated, sensitive, or obsolete files. Confirm purpose before removing any tracked file.
-- Editor tasks, when the repo uses them, cover dev, build, typecheck, lint, format, test, and full verify with short consistent names. No task the repo cannot execute.
-- Persistent logs go to a dedicated directory with stable filenames, command context, failure output, no secrets, and an ignore rule. Prefer redirection over a logging framework.
+- Keep existing editor tasks accurate for commands the repo supports. Do not add tasks by default.
+- When persistent logs are required, reuse the existing location and keep command context and failure output free of secrets. Prefer redirection over a logging framework.
 
 ## Honesty
 

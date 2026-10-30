@@ -16,11 +16,11 @@ For each finding worth acting on:
 8. Confidence per the scale below.
 9. Estimated removable lines, net of the replacement.
 10. Verification that proves the change.
-11. Concrete future condition that would justify adding the machinery back.
+11. Any authority or decision needed before the change.
 
 ## Groups
 
-- **Safe deletion (D):** evidence bar met, no data or schema change, no public contract change. Revert is a plain code revert.
+- **Safe deletion (D):** evidence bar met, no data or schema change, no public contract change. Revert is a plain code revert. This classification is not authorization to delete files.
 - **Refactor (R):** behavior stays, shape changes: merge duplicates, inline a one-caller wrapper, replace a registry with a switch, collapse layers. Needs the retained behavior covered before and after.
 - **Needs migration plan (M):** touches schema, stored data, applied migration history, a public API, a config or file format in the field, or deploy order. Always carries a plan with steps, verification, and rollback.
 
@@ -36,6 +36,8 @@ Only high-confidence findings go into the safe-deletion group.
 
 ## Line Estimate
 
+When requested or useful, estimate from scoped evidence:
+
 - Count lines per finding: whole files deleted, plus line ranges removed, minus replacement lines. Use `git ls-files` with a line count or the scoped `git diff --numstat`; do not guess.
 - Report separately: source, tests, migrations and schema, config and scripts, docs. Exclude generated files and lockfiles, or list them apart.
 - Sum per group and in total. Mark it as an estimate. It informs the plan; it is not the goal.
@@ -44,7 +46,7 @@ Only high-confidence findings go into the safe-deletion group.
 
 Order candidates by deletion value against behavioral risk. Break ties with maintenance cost, migration complexity, user impact, and confidence. Land high-value low-risk slices first so later slices inherit a smaller repo.
 
-Delete whole systems when the evidence supports it. A subsystem with no live entry point goes out as one finding, not as fifty small ones.
+Group a whole subsystem as one finding when the evidence supports it. Obtain explicit authority before deleting its files.
 
 ## Dead And Unreachable
 
@@ -97,7 +99,7 @@ Before calling any of these dead, check: string-based routing, reflection, depen
 
 - Dynamic adapter registration for a fixed implementation set
 - Capability maps for static features
-- Approval gates for an action the caller already chose
+- Repeated confirmation after the caller already authorized the same action, provided no separate approval requirement applies
 - Extension points with no extension, placeholder modules, empty packages
 - Future-facing interfaces with no current implementation requirement
 - Configuration values that never vary

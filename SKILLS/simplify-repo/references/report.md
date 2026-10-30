@@ -28,10 +28,10 @@ Read during step 9 in implement mode. Audit-only mode uses [audit-report.md](aud
 
 **Risks.** Unverified behavior, hardware, network, or credential dependent checks, manual verification owed, known limitations.
 
-**Deliberately omitted machinery.** Each mechanism considered and not added — dynamic registry, queue, custom cancellation, retry state machine, compatibility wrapper, extra configuration, DI layer, distributed lock, extension point — with the concrete future condition that would justify reconsidering it.
+Include a deferred design decision only when it affects the result or the user needs to choose it.
 
 ## Tracker Rules
 
-Keep issues open unless the user authorized closing them. Update active items to the new architecture, drop obsolete implementation instructions, keep unresolved product decisions visible, add acceptance criteria when missing. Preserve historical plans as history; note that direction changed and link the replacement. Never rewrite an old plan to look consistent with the new implementation.
+Keep issues open unless the user authorized closing them. Update active items only within the tracker contract and authorized scope. Preserve historical plans as history; never rewrite an old plan to make it look consistent with the new implementation.
 
-File a ticket only for genuine deferred work: product decisions that cannot be inferred, external blockers, manual integration, migrations outside the safe scope. Never as a substitute for work this pass could finish.
+Use the existing tracker for genuine deferred work only when its contract requires it and the action is authorized. Never file a ticket as a substitute for work this pass could finish.
